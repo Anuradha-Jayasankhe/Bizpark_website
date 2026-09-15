@@ -113,8 +113,19 @@ export default function App() {
 
   if (dataState.status === 'loading') {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-[#f5f4ef] flex items-center justify-center px-6">
-        <p className="text-sm uppercase tracking-[0.2em] text-[#f2603e]">Loading live content...</p>
+      <div className="brand-loader min-h-screen bg-[#0a0a0a] text-[#f5f4ef] flex items-center justify-center px-6">
+        <div className="brand-loader__wordmark" aria-label="Bizpark Studio">
+          {'BIZPARK STUDIO'.split('').map((letter, index) => (
+            <span
+              className={letter === ' ' ? 'brand-loader__space' : 'brand-loader__letter'}
+              key={`${letter}-${index}`}
+              style={{ '--letter-delay': `${index * 0.09}s` }}
+              aria-hidden="true"
+            >
+              {letter === ' ' ? '\u00a0' : letter}
+            </span>
+          ))}
+        </div>
       </div>
     );
   }
