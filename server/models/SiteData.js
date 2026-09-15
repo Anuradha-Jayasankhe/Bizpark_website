@@ -31,10 +31,13 @@ const siteDataSchema = new mongoose.Schema(
       type: Object,
       default: {
         adminEmail: 'bizparkstudio@gmail.com',
-        whatsappNumber: '0783157736',
-        phone: '0783157736',
+        whatsappNumber: '+94 72 954 5538',
+        phone: '+94 72 954 5538',
         address: 'Colombo, Sri Lanka',
-        web3formsKey: '68a920d3-df9e-456d-84d8-feb25b489cd5'
+        web3formsKey: '68a920d3-df9e-456d-84d8-feb25b489cd5',
+        linkedin: 'https://www.linkedin.com/company/bizparkstudio/',
+        facebook: 'https://www.facebook.com/bizparkstudio',
+        instagram: 'https://www.instagram.com/bizparkstudio'
       }
     }
   },

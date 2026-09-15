@@ -28,10 +28,13 @@ export default function AdminPanel() {
     const storedBackend = typeof window !== 'undefined' ? localStorage.getItem('bizpark_backend_url') : '';
     return {
       adminEmail: 'bizparkstudio@gmail.com',
-      whatsappNumber: '0783157736',
-      phone: '0783157736',
+      whatsappNumber: '+94 72 954 5538',
+      phone: '+94 72 954 5538',
       address: 'Colombo, Sri Lanka',
       web3formsKey: '68a920d3-df9e-456d-84d8-feb25b489cd5',
+      linkedin: 'https://www.linkedin.com/company/bizparkstudio/',
+      facebook: 'https://www.facebook.com/bizparkstudio',
+      instagram: 'https://www.instagram.com/bizparkstudio',
       adminUsername: 'admin',
       adminPassword: 'bizpark123',
       backendUrl: storedBackend || '',
@@ -467,13 +470,22 @@ export default function AdminPanel() {
             </div>
           )}
 
-          <form onSubmit={handleLoginSubmit} className="space-y-5">
+          <form onSubmit={handleLoginSubmit} className="space-y-5" autoComplete="off">
+            {/* Hidden dummy fields to prevent aggressive browser autofill */}
+            <input type="text" name="fake_user" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" autoComplete="off" />
+            <input type="password" name="fake_pass" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" autoComplete="off" />
+
             <div>
               <label className="block font-mono text-xs text-[#95928a] uppercase mb-2">Username</label>
               <input
                 type="text"
+                name="admin_user_entry"
+                id="admin_user_entry"
                 required
-                placeholder="admin"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
                 value={loginCreds.username}
                 onChange={(e) => setLoginCreds({ ...loginCreds, username: e.target.value })}
                 className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
@@ -484,8 +496,10 @@ export default function AdminPanel() {
               <label className="block font-mono text-xs text-[#95928a] uppercase mb-2">Password</label>
               <input
                 type="password"
+                name="admin_pass_entry"
+                id="admin_pass_entry"
                 required
-                placeholder="••••••••"
+                autoComplete="new-password"
                 value={loginCreds.password}
                 onChange={(e) => setLoginCreds({ ...loginCreds, password: e.target.value })}
                 className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
@@ -549,7 +563,7 @@ export default function AdminPanel() {
       image: '/images/hero.png',
       bio: '',
       email: 'bizparkstudio@gmail.com',
-      phone: '0783157736'
+      phone: '+94 72 954 5538'
     });
   };
 
@@ -2167,7 +2181,7 @@ export default function AdminPanel() {
                           type="text"
                           value={editingTeamMember.phone || ''}
                           onChange={(e) => setEditingTeamMember({ ...editingTeamMember, phone: e.target.value })}
-                          placeholder="e.g. 0783157736"
+                          placeholder="e.g. +94 72 954 5538"
                           className="w-full bg-[#0a0a0a] border border-white/15 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
                         />
                       </div>
@@ -2299,7 +2313,7 @@ export default function AdminPanel() {
                     type="text"
                     value={settingsState.phone || ''}
                     onChange={(e) => setSettingsState({ ...settingsState, phone: e.target.value })}
-                    placeholder="0783157736"
+                    placeholder="+94 72 954 5538"
                     className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
                   />
                   <span className="text-[11px] text-[#605e58] font-mono mt-1 block">
@@ -2321,6 +2335,45 @@ export default function AdminPanel() {
                   <span className="text-[11px] text-[#605e58] font-mono mt-1 block">
                     Studio address shown on the Contact page and official communications.
                   </span>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-[#95928a] uppercase mb-2">
+                    LinkedIn Company Profile URL
+                  </label>
+                  <input
+                    type="text"
+                    value={settingsState.linkedin || ''}
+                    onChange={(e) => setSettingsState({ ...settingsState, linkedin: e.target.value })}
+                    placeholder="https://www.linkedin.com/company/bizparkstudio/"
+                    className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-[#95928a] uppercase mb-2">
+                    Facebook Page URL
+                  </label>
+                  <input
+                    type="text"
+                    value={settingsState.facebook || ''}
+                    onChange={(e) => setSettingsState({ ...settingsState, facebook: e.target.value })}
+                    placeholder="https://www.facebook.com/bizparkstudio"
+                    className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-[#95928a] uppercase mb-2">
+                    Instagram Profile URL
+                  </label>
+                  <input
+                    type="text"
+                    value={settingsState.instagram || ''}
+                    onChange={(e) => setSettingsState({ ...settingsState, instagram: e.target.value })}
+                    placeholder="https://www.instagram.com/bizparkstudio"
+                    className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
+                  />
                 </div>
               </div>
 

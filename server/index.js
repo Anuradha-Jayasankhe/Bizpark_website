@@ -496,7 +496,7 @@ if (fs.existsSync(distDir)) {
 }
 
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Bizpark Studio Express Backend active at http://localhost:${PORT}`);
   });
 }

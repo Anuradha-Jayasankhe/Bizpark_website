@@ -475,7 +475,7 @@ export const initialTeamMembers = [
     image: '/images/hero.png',
     bio: 'Directing digital strategy, robust web architecture, and full-stack software development for modern enterprises.',
     email: 'bizparkstudio@gmail.com',
-    phone: '0783157736'
+    phone: '+94 72 954 5538'
   },
   {
     id: 'team-2',
@@ -484,7 +484,7 @@ export const initialTeamMembers = [
     image: '/images/hero.png',
     bio: 'Crafting authoritative visual brand systems, packaging design, and high-impact typography.',
     email: 'design@bizparkstudio.com',
-    phone: '0783157736'
+    phone: '+94 72 954 5538'
   },
   {
     id: 'team-3',
@@ -493,16 +493,19 @@ export const initialTeamMembers = [
     image: '/images/hero.png',
     bio: 'Building data-backed acquisition funnels, social campaigns, and scalable conversion engines.',
     email: 'marketing@bizparkstudio.com',
-    phone: '0783157736'
+    phone: '+94 72 954 5538'
   }
 ];
 
 export const initialSettings = {
   adminEmail: 'bizparkstudio@gmail.com',
-  whatsappNumber: '0783157736',
-  phone: '0783157736',
+  whatsappNumber: '+94 72 954 5538',
+  phone: '+94 72 954 5538',
   address: 'Colombo, Sri Lanka',
-  web3formsKey: '68a920d3-df9e-456d-84d8-feb25b489cd5'
+  web3formsKey: '68a920d3-df9e-456d-84d8-feb25b489cd5',
+  linkedin: 'https://www.linkedin.com/company/bizparkstudio/',
+  facebook: 'https://www.facebook.com/bizparkstudio',
+  instagram: 'https://www.instagram.com/bizparkstudio'
 };
 
 export const initialInquiries = [
@@ -536,11 +539,21 @@ export function getStoreData() {
         if (!parsed.settings) {
           parsed.settings = initialSettings;
         } else {
-          if (!parsed.settings.whatsappNumber || parsed.settings.whatsappNumber === '+94770000000' || parsed.settings.whatsappNumber.includes('4986658')) {
-            parsed.settings.whatsappNumber = '0783157736';
+          // Auto-migrate legacy phone/whatsapp numbers
+          if (!parsed.settings.whatsappNumber || parsed.settings.whatsappNumber === '0783157736' || parsed.settings.whatsappNumber === '+94770000000' || parsed.settings.whatsappNumber.includes('4986658')) {
+            parsed.settings.whatsappNumber = '+94 72 954 5538';
           }
-          if (!parsed.settings.phone) {
-            parsed.settings.phone = '0783157736';
+          if (!parsed.settings.phone || parsed.settings.phone === '0783157736') {
+            parsed.settings.phone = '+94 72 954 5538';
+          }
+          if (!parsed.settings.linkedin) {
+            parsed.settings.linkedin = 'https://www.linkedin.com/company/bizparkstudio/';
+          }
+          if (!parsed.settings.facebook) {
+            parsed.settings.facebook = 'https://www.facebook.com/bizparkstudio';
+          }
+          if (!parsed.settings.instagram) {
+            parsed.settings.instagram = 'https://www.instagram.com/bizparkstudio';
           }
           if (!parsed.settings.address) {
             parsed.settings.address = 'Colombo, Sri Lanka';
