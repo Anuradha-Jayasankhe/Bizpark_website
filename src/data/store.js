@@ -654,40 +654,45 @@ export async function syncFromBackend() {
 
     const backendUrl = getBackendUrl();
     const res = await fetch(`${backendUrl}/api/data`);
-    if (res.ok) {
-      const remoteData = await res.json();
-      if (remoteData && remoteData.categories && remoteData.categories.length > 0) {
-        const local = getStoreData();
-
-        // MongoDB is the single source of truth for all live website visitors!
-        const merged = {
-          ...local,
-          categories: remoteData.categories,
-          homepageHeroBanners: remoteData.homepageHeroBanners || local.homepageHeroBanners,
-          softwareBanners: remoteData.softwareBanners || local.softwareBanners,
-          softwareProducts: remoteData.softwareProducts || local.softwareProducts,
-          teamMembers: remoteData.teamMembers || local.teamMembers || initialTeamMembers,
-          settings: {
-            ...local.settings,
-            ...(remoteData.settings || {})
-          },
-          _savedAt: remoteData.updatedAt || new Date().toISOString()
-        };
-
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-        } catch (storageErr) {
-          console.warn('LocalStorage save skipped (quota limit):', storageErr.message);
-        }
-
-        window.dispatchEvent(new Event('bizpark_store_updated'));
-        return { success: true, data: merged };
-      }
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.error || `Backend returned ${res.status}`);
     }
+
+    const remoteData = await res.json();
+    if (!remoteData || !Array.isArray(remoteData.categories)) {
+      throw new Error('Backend returned invalid site data');
+    }
+
+    const local = getStoreData();
+
+    // MongoDB is the single source of truth for all live website visitors.
+    const merged = {
+      ...local,
+      categories: remoteData.categories,
+      homepageHeroBanners: remoteData.homepageHeroBanners || local.homepageHeroBanners,
+      softwareBanners: remoteData.softwareBanners || local.softwareBanners,
+      softwareProducts: remoteData.softwareProducts || local.softwareProducts,
+      teamMembers: remoteData.teamMembers || local.teamMembers || initialTeamMembers,
+      settings: {
+        ...local.settings,
+        ...(remoteData.settings || {})
+      },
+      _savedAt: remoteData.updatedAt || new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    } catch (storageErr) {
+      console.warn('LocalStorage save skipped (quota limit):', storageErr.message);
+    }
+
+    window.dispatchEvent(new Event('bizpark_store_updated'));
+    return { success: true, data: merged };
   } catch (err) {
-    console.warn('Backend sync failed, using cached store data:', err.message);
+    console.error('Backend sync failed; live site data is unavailable:', err.message);
+    return { success: false, error: err.message };
   }
-  return { success: false, data: getStoreData() };
 }
 
 // Automatically initiate background sync on module load

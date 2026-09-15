@@ -9,7 +9,6 @@ import nodemailer from 'nodemailer';
 import multer from 'multer';
 import { SiteData } from './models/SiteData.js';
 import { Inquiry } from './models/Inquiry.js';
-import { defaultSeedData } from './defaultData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -206,18 +205,6 @@ async function connectDB() {
       cached.promise = mongoose.connect(MONGODB_URI, opts).then(async (m) => {
         cached.lastError = null;
         console.log('✓ Successfully connected to MongoDB Atlas (Database: bizpark_studio)');
-
-        // Seed database if empty
-        try {
-          const existing = await SiteData.findOne({ key: 'main_site_data' });
-          if (!existing) {
-            console.log('🌱 Seeding initial site data into MongoDB Atlas...');
-            await SiteData.create(defaultSeedData);
-            console.log('✓ Initial site data successfully seeded into MongoDB Atlas!');
-          }
-        } catch (seedErr) {
-          console.error('Seed check error:', seedErr.message);
-        }
         return m;
       }).catch((err) => {
         cached.promise = null;
@@ -307,17 +294,20 @@ apiRouter.get('/data', async (req, res) => {
       await connectDB();
     }
     if (mongoose.connection.readyState !== 1) {
-      console.warn('MongoDB not ready, returning fallback data');
-      return res.json(defaultSeedData);
+      console.error('MongoDB not ready; refusing to serve seed data as live site content');
+      return res.status(503).json({
+        error: 'MongoDB Atlas is unavailable. Live site data could not be loaded.',
+        lastError: cached.lastError
+      });
     }
     let data = await SiteData.findOne({ key: 'main_site_data' });
     if (!data) {
-      data = await SiteData.create(defaultSeedData);
+      return res.status(404).json({ error: 'Live site data has not been configured yet.' });
     }
     res.json(data);
   } catch (err) {
     console.error('Error fetching site data:', err);
-    res.status(500).json({ error: 'Failed to fetch site data', fallback: defaultSeedData });
+    res.status(500).json({ error: 'Failed to fetch live site data' });
   }
 });
 
