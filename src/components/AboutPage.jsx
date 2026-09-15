@@ -13,10 +13,10 @@ export default function AboutPage() {
 
   const teamMembers = storeData.teamMembers || [];
   const settings = storeData.settings || {};
-  const whatsappNum = settings.whatsappNumber || '0783157736';
+  const whatsappNum = settings.whatsappNumber || '+94 72 954 5538';
 
   const formatWaNumber = (num) => {
-    if (!num) return '94783157736';
+    if (!num) return '94729545538';
     const digitsOnly = num.replace(/\D/g, '');
     if (digitsOnly.startsWith('0')) return `94${digitsOnly.slice(1)}`;
     if (digitsOnly.startsWith('94')) return digitsOnly;

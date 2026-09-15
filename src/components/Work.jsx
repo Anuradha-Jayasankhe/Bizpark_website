@@ -85,13 +85,13 @@ export default function Work() {
                 </div>
 
                 {/* Top Badge: Category & Sub-tag */}
-                <div className="relative z-20 flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-[#f2603e] bg-[#0a0a0a]/95 backdrop-blur-md px-4 py-2 border border-[#f2603e]/45 tracking-wider uppercase shadow-lg">
+                <div className="relative z-20 flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-mono text-xs font-bold text-[#f2603e] bg-[#0a0a0a]/95 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 border border-[#f2603e]/45 tracking-wider uppercase shadow-lg">
                     {catGroup.category} ({currentProjIndex + 1}/{activeProjects.length})
                   </span>
                   
                   {currentProject?.subTag && (
-                    <span className="font-mono text-[10px] text-[#f5f4ef] bg-black/90 backdrop-blur-md px-3 py-1 border border-white/20 cut-sm font-semibold">
+                    <span className="font-mono text-[10px] text-[#f5f4ef] bg-black/90 backdrop-blur-md px-2.5 sm:px-3 py-1 border border-white/20 cut-sm font-semibold">
                       {currentProject.subTag}
                     </span>
                   )}

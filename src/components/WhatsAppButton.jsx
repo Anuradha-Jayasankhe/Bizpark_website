@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getStoreData } from '../data/store';
 
 export default function WhatsAppButton() {
-  const [whatsappNumber, setWhatsappNumber] = useState('0783157736');
+  const [whatsappNumber, setWhatsappNumber] = useState('+94 72 954 5538');
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function WhatsAppButton() {
 
   // Format clean international WhatsApp phone number
   const formatWaNumber = (num) => {
-    if (!num) return '94783157736';
+    if (!num) return '94729545538';
     const digitsOnly = num.replace(/\D/g, '');
     if (digitsOnly.startsWith('0')) {
       return `94${digitsOnly.slice(1)}`;
@@ -34,7 +34,7 @@ export default function WhatsAppButton() {
   const waUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent('Hello Bizpark Studio, I would like to inquire about your software and design services!')}`;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center group">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center group">
       {/* Tooltip */}
       <div
         className={`mr-3 px-3.5 py-1.5 bg-[#141413] border border-[#25D366]/40 text-white text-xs font-mono rounded shadow-2xl transition-all duration-300 pointer-events-none hidden sm:flex items-center gap-2 ${
@@ -53,7 +53,7 @@ export default function WhatsAppButton() {
         aria-label="Chat with Bizpark Studio on WhatsApp"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
-        className="relative flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#25D366] text-white shadow-2xl shadow-[#25D366]/40 hover:bg-[#20bd5a] hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[#25D366]/30"
+        className="relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white shadow-2xl shadow-[#25D366]/40 hover:bg-[#20bd5a] hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[#25D366]/30"
       >
         {/* Pulsing ring animation */}
         <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-60 animate-ping -z-10" />

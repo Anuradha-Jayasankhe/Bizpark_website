@@ -59,41 +59,41 @@ export default function Hero() {
   };
 
   return (
-    <section id="top" className="relative pt-36 md:pt-48 pb-24 md:pb-32 overflow-hidden bg-[#0a0a0a]">
+    <section id="top" className="relative pt-28 sm:pt-36 md:pt-48 pb-20 sm:pb-24 md:pb-32 overflow-hidden bg-[#0a0a0a]">
       {/* Ambient background glow lighting */}
-      <div className="absolute top-1/3 left-1/4 -translate-x-1/2 w-[550px] h-[350px] bg-[#f2603e]/15 blur-[140px] rounded-full pointer-events-none z-0" />
-      <div className="absolute bottom-10 right-10 w-[400px] h-[300px] bg-[#f2603e]/10 blur-[120px] rounded-full pointer-events-none z-0" />
+      <div className="absolute top-1/3 left-1/4 -translate-x-1/2 w-[350px] sm:w-[550px] h-[250px] sm:h-[350px] bg-[#f2603e]/15 blur-[120px] sm:blur-[140px] rounded-full pointer-events-none z-0" />
+      <div className="absolute bottom-10 right-10 w-[300px] sm:w-[400px] h-[200px] sm:h-[300px] bg-[#f2603e]/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none z-0" />
 
       {/* Main Container */}
-      <div className="max-w-[1240px] mx-auto px-6 sm:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
 
           {/* Left Column: Hero Copy & Actions */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-2.5 text-xs text-[#f2603e] font-mono uppercase tracking-widest bg-[#141413] px-3.5 py-1.5 border border-[#f2603e]/30 cut-sm font-bold">
-              <span className="w-4 h-[1px] bg-[#f2603e]" />
+          <div className="lg:col-span-6 space-y-5 sm:space-y-6">
+            <div className="inline-flex items-center gap-2.5 text-[11px] sm:text-xs text-[#f2603e] font-mono uppercase tracking-widest bg-[#141413] px-3 sm:px-3.5 py-1.5 border border-[#f2603e]/30 cut-sm font-bold">
+              <span className="w-3.5 sm:w-4 h-[1px] bg-[#f2603e]" />
               {currentBanner.badge || 'NUMBER ONE. DIGITAL STUDIO'}
             </div>
 
-            <h1 className="font-chakra font-bold text-4xl sm:text-5xl lg:text-6xl uppercase tracking-tight text-[#f5f4ef] leading-[1.08]">
+            <h1 className="font-chakra font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight text-[#f5f4ef] leading-[1.08] break-words">
               {currentBanner.title || 'We build the digital side of your business.'}
             </h1>
 
-            <p className="text-[#95928a] text-base sm:text-lg max-w-xl leading-relaxed">
+            <p className="text-[#95928a] text-sm sm:text-base lg:text-lg max-w-xl leading-relaxed">
               {currentBanner.subtitle || 'One studio, three disciplines — software development, social media marketing, and branding — run from a single plan, so nothing gets lost between teams.'}
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2">
               <button
                 onClick={() => handleCtaClick(currentBanner.ctaPrimaryLink || '#requirement-form')}
-                className="btn-primary cut-sm inline-flex items-center gap-2.5 bg-[#f2603e] text-[#0a0a0a] font-semibold text-sm sm:text-base px-7 py-4 hover:bg-[#ff6f4a] transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-[#f2603e]/25 font-chakra uppercase font-bold"
+                className="btn-primary cut-sm inline-flex items-center justify-center gap-2.5 bg-[#f2603e] text-[#0a0a0a] font-semibold text-xs sm:text-sm md:text-base px-6 sm:px-7 py-3.5 sm:py-4 hover:bg-[#ff6f4a] transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-[#f2603e]/25 font-chakra uppercase font-bold w-full sm:w-auto text-center"
               >
                 {currentBanner.ctaPrimaryText || 'Start a project →'}
               </button>
 
               <button
                 onClick={() => handleCtaClick(currentBanner.ctaSecondaryLink || '#work')}
-                className="btn-ghost cut-sm inline-flex items-center gap-2.5 bg-transparent border border-white/20 text-[#f5f4ef] font-semibold text-sm sm:text-base px-7 py-4 hover:border-[#f2603e] hover:text-[#f2603e] transition-all duration-200 hover:-translate-y-0.5 font-chakra uppercase"
+                className="btn-ghost cut-sm inline-flex items-center justify-center gap-2.5 bg-transparent border border-white/20 text-[#f5f4ef] font-semibold text-xs sm:text-sm md:text-base px-6 sm:px-7 py-3.5 sm:py-4 hover:border-[#f2603e] hover:text-[#f2603e] transition-all duration-200 hover:-translate-y-0.5 font-chakra uppercase w-full sm:w-auto text-center"
               >
                 {currentBanner.ctaSecondaryText || 'See our work'}
               </button>
