@@ -65,8 +65,8 @@ export default function Hero() {
       <div className="absolute bottom-10 right-10 w-[300px] sm:w-[400px] h-[200px] sm:h-[300px] bg-[#f2603e]/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none z-0" />
 
       {/* Main Container */}
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
           {/* Left Column: Hero Copy & Actions */}
           <div className="lg:col-span-6 space-y-5 sm:space-y-6">
@@ -75,11 +75,11 @@ export default function Hero() {
               {currentBanner.badge || 'NUMBER ONE. DIGITAL STUDIO'}
             </div>
 
-            <h1 className="font-chakra font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight text-[#f5f4ef] leading-[1.08] break-words">
+            <h1 className="font-chakra font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-[4.2rem] uppercase tracking-tight text-[#f5f4ef] leading-[1.08] break-words">
               {currentBanner.title || 'We build the digital side of your business.'}
             </h1>
 
-            <p className="text-[#95928a] text-sm sm:text-base lg:text-lg max-w-xl leading-relaxed">
+            <p className="text-[#95928a] text-sm sm:text-base lg:text-lg 2xl:text-xl max-w-2xl leading-relaxed">
               {currentBanner.subtitle || 'One studio, three disciplines — software development, social media marketing, and branding — run from a single plan, so nothing gets lost between teams.'}
             </p>
 
@@ -131,7 +131,7 @@ export default function Hero() {
               ref={visualRef}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
-              className="relative w-full max-w-[620px] cursor-pointer perspective-1000 group"
+              className="relative w-full max-w-[740px] 2xl:max-w-[820px] cursor-pointer perspective-1000 group"
             >
               <span className="absolute -bottom-6 right-0 font-mono text-[11px] text-[#f2603e] tracking-widest uppercase">
                 BIZPARKSTUDIO
@@ -140,7 +140,7 @@ export default function Hero() {
               {/* Glowing Framed Container */}
               <div
                 style={{ transform: transformStyle, transition: 'transform 0.15s ease-out' }}
-                className="bg-[#141413] border border-[#f2603e]/40 p-2 cut shadow-2xl shadow-[#f2603e]/10 group-hover:border-[#f2603e] transition-all duration-300 relative overflow-hidden"
+                className="bg-[#141413] border border-[#f2603e]/40 p-2 sm:p-2.5 cut shadow-2xl shadow-[#f2603e]/10 group-hover:border-[#f2603e] transition-all duration-300 relative overflow-hidden"
               >
                 <div className="aspect-[16/10] w-full cut border border-white/10 overflow-hidden relative bg-black">
                   {isVideo(currentBanner.image) ? (

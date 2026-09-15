@@ -61,7 +61,7 @@ export default function Navbar({ currentPage }) {
             : 'bg-[#0a0a0a]/40 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none py-3.5 sm:py-5 border-white/5 md:border-transparent'
         }`}
       >
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
           <nav className="flex items-center justify-between gap-4">
             
             {/* Brand Logo & Name */}
@@ -132,7 +132,7 @@ export default function Navbar({ currentPage }) {
               <a
                 href="#requirement-form"
                 onClick={(e) => { e.preventDefault(); scrollToSection('requirement-form'); }}
-                className="hover:text-[#f2603e] text-[#f2603e]/90 font-medium transition-colors duration-200"
+                className="hover:text-white transition-colors duration-200"
               >
                 Submit Requirement
               </a>

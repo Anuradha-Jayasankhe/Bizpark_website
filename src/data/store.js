@@ -525,7 +525,14 @@ export const initialInquiries = [
   }
 ];
 
+// In-memory active cache ensuring real-time UI updates even if localStorage quota is exceeded
+let memoryStoreData = null;
+
 export function getStoreData() {
+  if (memoryStoreData && memoryStoreData.categories) {
+    return memoryStoreData;
+  }
+
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -571,6 +578,7 @@ export function getStoreData() {
         if (softwareCat && softwareCat.projects) {
           parsed.softwareProducts = softwareCat.projects;
         }
+        memoryStoreData = parsed;
         return parsed;
       }
     }
@@ -579,7 +587,7 @@ export function getStoreData() {
   }
 
   const defaultSoftware = initialCategories.find((c) => c.key === 'software-solutions').projects;
-  return {
+  const initialData = {
     categories: initialCategories,
     homepageHeroBanners: initialHomepageHeroBanners,
     softwareBanners: initialSoftwareBanners,
@@ -588,6 +596,8 @@ export function getStoreData() {
     settings: initialSettings,
     inquiries: initialInquiries
   };
+  memoryStoreData = initialData;
+  return initialData;
 }
 
 // Dynamic Backend URL Resolver (supports local dev, custom live backend, runtime-config, and same-origin hosting)
@@ -653,7 +663,14 @@ export async function syncFromBackend() {
     }
 
     const backendUrl = getBackendUrl();
-    const res = await fetch(`${backendUrl}/api/data`);
+    const res = await fetch(`${backendUrl}/api/data?_t=${Date.now()}`, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
+
     if (!res.ok) {
       const errorBody = await res.json().catch(() => ({}));
       throw new Error(errorBody.error || `Backend returned ${res.status}`);
@@ -666,20 +683,22 @@ export async function syncFromBackend() {
 
     const local = getStoreData();
 
-    // MongoDB is the single source of truth for all live website visitors.
+    // MongoDB Atlas is the single source of truth for all live website content.
     const merged = {
       ...local,
-      categories: remoteData.categories,
-      homepageHeroBanners: remoteData.homepageHeroBanners || local.homepageHeroBanners,
-      softwareBanners: remoteData.softwareBanners || local.softwareBanners,
-      softwareProducts: remoteData.softwareProducts || local.softwareProducts,
-      teamMembers: remoteData.teamMembers || local.teamMembers || initialTeamMembers,
+      categories: Array.isArray(remoteData.categories) ? remoteData.categories : local.categories,
+      homepageHeroBanners: Array.isArray(remoteData.homepageHeroBanners) ? remoteData.homepageHeroBanners : (local.homepageHeroBanners || initialHomepageHeroBanners),
+      softwareBanners: Array.isArray(remoteData.softwareBanners) ? remoteData.softwareBanners : (local.softwareBanners || initialSoftwareBanners),
+      softwareProducts: Array.isArray(remoteData.softwareProducts) ? remoteData.softwareProducts : (local.softwareProducts || []),
+      teamMembers: Array.isArray(remoteData.teamMembers) ? remoteData.teamMembers : (local.teamMembers || initialTeamMembers),
       settings: {
         ...local.settings,
         ...(remoteData.settings || {})
       },
       _savedAt: remoteData.updatedAt || new Date().toISOString()
     };
+
+    memoryStoreData = merged;
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
@@ -708,6 +727,9 @@ export async function saveStoreData(data) {
   }
   data._savedAt = new Date().toISOString();
 
+  // Update in-memory active cache immediately
+  memoryStoreData = data;
+
   // 2. Safely update localStorage without throwing quota errors
   let localSaved = false;
   try {
@@ -725,13 +747,21 @@ export async function saveStoreData(data) {
   try {
     const res = await fetch(`${backendUrl}/api/data`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      },
       body: JSON.stringify(data)
     });
 
     if (res.ok) {
       const resultJson = await res.json();
       console.log('✓ Successfully saved site data to MongoDB Atlas cloud database');
+      if (resultJson && resultJson.data) {
+        memoryStoreData = { ...data, ...resultJson.data };
+        window.dispatchEvent(new Event('bizpark_store_updated'));
+      }
       return { success: true, remoteSaved: true, localSaved, data: resultJson };
     } else {
       const errText = await res.text().catch(() => '');

@@ -88,7 +88,7 @@ export default function ContactPage() {
       {/* Background glow lighting */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-[#f2603e]/10 blur-[150px] rounded-full pointer-events-none -z-10" />
 
-      <div className="max-w-[1240px] mx-auto px-6 sm:px-8">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
         
         {/* Navigation Breadcrumb / Back Link */}
         <div className="mb-8">

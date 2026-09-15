@@ -90,7 +90,7 @@ export default function RequirementForm() {
 
   return (
     <section id="requirement-form" className="py-24 bg-[#0d0d0d] border-t border-white/10 relative">
-      <div className="max-w-[1240px] mx-auto px-6 sm:px-8">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
         
         {/* Section Title */}
         <div className="max-w-2xl mb-12">

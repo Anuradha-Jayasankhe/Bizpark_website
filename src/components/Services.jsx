@@ -58,7 +58,7 @@ export default function Services() {
 
   return (
     <section id="services" className="py-28 bg-[#0a0a0a] relative">
-      <div className="max-w-[1240px] mx-auto px-6 sm:px-8">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
         
         {/* Section Head */}
         <div className="max-w-2xl mb-16">
