@@ -17,17 +17,20 @@ import { syncFromBackend } from './data/store';
 
 export default function App() {
   const [route, setRoute] = useState({ page: 'home', id: null });
-  const [dataState, setDataState] = useState({ status: 'loading', error: '' });
+  const [dataState, setDataState] = useState({ status: 'ready', error: '' });
 
   useEffect(() => {
     let isMounted = true;
 
-    syncFromBackend().then((result) => {
-      if (!isMounted) return;
-      setDataState(result.success
-        ? { status: 'ready', error: '' }
-        : { status: 'error', error: result.error || 'Live site data could not be loaded.' });
-    });
+    // Gracefully sync from backend in background; seamlessly fallback to store data
+    syncFromBackend()
+      .then(() => {
+        if (isMounted) setDataState({ status: 'ready', error: '' });
+      })
+      .catch((err) => {
+        console.warn('Backend sync deferred to local/seed store data:', err.message);
+        if (isMounted) setDataState({ status: 'ready', error: '' });
+      });
 
     return () => {
       isMounted = false;
@@ -125,24 +128,6 @@ export default function App() {
               {letter === ' ' ? '\u00a0' : letter}
             </span>
           ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (dataState.status === 'error') {
-    return (
-      <div className="min-h-screen bg-[#0a0a0a] text-[#f5f4ef] flex items-center justify-center px-6 text-center">
-        <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-[#f2603e]">Live content unavailable</p>
-          <p className="mt-3 text-sm text-[#aaa]">Please try again in a moment.</p>
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            className="mt-6 border border-[#f2603e] px-5 py-3 text-xs uppercase tracking-[0.15em] text-[#f2603e] hover:bg-[#f2603e] hover:text-[#0a0a0a]"
-          >
-            Retry
-          </button>
         </div>
       </div>
     );

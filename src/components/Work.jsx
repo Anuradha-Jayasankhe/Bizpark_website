@@ -36,7 +36,7 @@ export default function Work() {
 
   return (
     <section id="work" className="py-28 bg-[#0a0a0a] relative">
-      <div className="max-w-[1240px] mx-auto px-6 sm:px-8">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
         
         {/* Section Head */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -97,8 +97,8 @@ export default function Work() {
                   )}
                 </div>
 
-                {/* Subtle Card Gradient Overlay strictly for bottom text legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity" />
+                {/* Rich Bottom-to-Top Dark Shade Overlay for crystal-clear readability & cyber depth */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/85 via-45% to-transparent z-10 opacity-95 group-hover:opacity-90 transition-opacity" />
 
                 {/* Content details for active project slide */}
                 <div className="relative z-20 w-full pt-20">

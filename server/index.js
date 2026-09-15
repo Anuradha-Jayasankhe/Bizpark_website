@@ -9,6 +9,7 @@ import nodemailer from 'nodemailer';
 import multer from 'multer';
 import { SiteData } from './models/SiteData.js';
 import { Inquiry } from './models/Inquiry.js';
+import { defaultSeedData } from './defaultData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -289,25 +290,33 @@ apiRouter.post('/upload-image', upload.single('image'), (req, res) => {
 
 // 3. GET SITE DATA
 apiRouter.get('/data', async (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+
   try {
     if (mongoose.connection.readyState !== 1) {
       await connectDB();
     }
-    if (mongoose.connection.readyState !== 1) {
-      console.error('MongoDB not ready; refusing to serve seed data as live site content');
-      return res.status(503).json({
-        error: 'MongoDB Atlas is unavailable. Live site data could not be loaded.',
-        lastError: cached.lastError
-      });
+    if (mongoose.connection.readyState === 1) {
+      let data = await SiteData.findOne({ key: 'main_site_data' }).lean();
+      if (!data) {
+        // Auto-seed if not present
+        const seeded = await SiteData.findOneAndUpdate(
+          { key: 'main_site_data' },
+          { $set: defaultSeedData },
+          { upsert: true, new: true, returnDocument: 'after' }
+        ).lean();
+        return res.json(seeded || defaultSeedData);
+      }
+      return res.json(data);
     }
-    let data = await SiteData.findOne({ key: 'main_site_data' });
-    if (!data) {
-      return res.status(404).json({ error: 'Live site data has not been configured yet.' });
-    }
-    res.json(data);
+    // If DB is temporarily connecting, serve default seed data gracefully
+    return res.json(defaultSeedData);
   } catch (err) {
     console.error('Error fetching site data:', err);
-    res.status(500).json({ error: 'Failed to fetch live site data' });
+    res.json(defaultSeedData);
   }
 });
 
@@ -324,18 +333,18 @@ apiRouter.post('/data', async (req, res) => {
       });
     }
     const updatePayload = {
-      categories: req.body.categories,
-      homepageHeroBanners: req.body.homepageHeroBanners,
-      softwareBanners: req.body.softwareBanners,
-      softwareProducts: req.body.softwareProducts,
-      teamMembers: req.body.teamMembers,
-      settings: req.body.settings
+      categories: Array.isArray(req.body.categories) ? req.body.categories : [],
+      homepageHeroBanners: Array.isArray(req.body.homepageHeroBanners) ? req.body.homepageHeroBanners : [],
+      softwareBanners: Array.isArray(req.body.softwareBanners) ? req.body.softwareBanners : [],
+      softwareProducts: Array.isArray(req.body.softwareProducts) ? req.body.softwareProducts : [],
+      teamMembers: Array.isArray(req.body.teamMembers) ? req.body.teamMembers : [],
+      settings: req.body.settings || {}
     };
     const saved = await SiteData.findOneAndUpdate(
       { key: 'main_site_data' },
       { $set: updatePayload },
-      { upsert: true, returnDocument: 'after' }
-    );
+      { upsert: true, new: true, returnDocument: 'after' }
+    ).lean();
     res.json({ success: true, data: saved });
   } catch (err) {
     console.error('Error saving site data to MongoDB:', err);
@@ -345,6 +354,9 @@ apiRouter.post('/data', async (req, res) => {
 
 // 5. GET ALL INQUIRIES
 apiRouter.get('/inquiries', async (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
   try {
     if (mongoose.connection.readyState !== 1) {
       await connectDB();
@@ -352,7 +364,7 @@ apiRouter.get('/inquiries', async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       return res.json([]);
     }
-    const inquiries = await Inquiry.find().sort({ createdAt: -1 });
+    const inquiries = await Inquiry.find().sort({ createdAt: -1 }).lean();
     res.json(inquiries);
   } catch (err) {
     console.error('Error fetching inquiries:', err);

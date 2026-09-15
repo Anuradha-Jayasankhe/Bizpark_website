@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { getStoreData } from '../data/store';
 import confetti from 'canvas-confetti';
 import { submitInquiry } from '../utils/mailService';
@@ -7,8 +7,6 @@ export default function ProjectDetail({ projectId }) {
   const [storeData, setStoreData] = useState(getStoreData());
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Showcase slider & process slider states
-  const [showcaseIndex, setShowcaseIndex] = useState(0);
   const [processIndex, setProcessIndex] = useState(0);
 
   // Interactive Download Terminal States
@@ -85,15 +83,10 @@ export default function ProjectDetail({ projectId }) {
 
   const processPhotos = (project && project.processImages) || [];
   const showcaseCount = showcaseMedia.length;
-
-  // Auto-play showcase slides if > 1 item
-  useEffect(() => {
-    if (showcaseCount <= 1) return;
-    const timer = setInterval(() => {
-      setShowcaseIndex((prev) => (prev + 1) % showcaseCount);
-    }, 5500);
-    return () => clearInterval(timer);
-  }, [showcaseCount]);
+  // Ensure enough items in one cycle so the strip always spans wide screens and loops seamlessly
+  const repeatCount = Math.max(1, Math.ceil(6 / Math.max(showcaseMedia.length, 1)));
+  const baseStrip = Array(repeatCount).fill(showcaseMedia).flat();
+  const marqueeDuration = Math.max(baseStrip.length * 4, 18);
 
   if (!project) {
     return (
@@ -282,7 +275,7 @@ Copyright (c) 2026 bizparkstudio. All rights reserved.
         {isSoftwareProject ? 'SOFTWARE' : 'CASESTUDY'}
       </div>
 
-      <div className="max-w-[1040px] mx-auto px-4 sm:px-8 relative z-10">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
         
         {/* Navigation Breadcrumb */}
         <div className="mb-6 sm:mb-10 flex flex-wrap items-center justify-between gap-3">
@@ -358,67 +351,96 @@ Copyright (c) 2026 bizparkstudio. All rights reserved.
           </div>
         </div>
 
-        {/* MULTI-MEDIA SHOWCASE SLIDER / VIDEO PLAYER */}
-        <div className="w-full aspect-[16/9] cut border border-white/15 overflow-hidden relative mb-8 sm:mb-14 bg-[#141413] shadow-2xl">
-          <div
-            className="w-full h-full flex transition-transform duration-700 ease-out"
-            style={{ transform: `translateX(-${showcaseIndex * 100}%)` }}
-          >
-            {showcaseMedia.map((med, idx) => (
-              <div key={idx} className="w-full h-full flex-shrink-0 relative bg-black">
-                {isVideo(med) ? (
-                  <video
-                    src={med.url}
-                    controls
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <img
-                    src={med.url}
-                    alt={`${project.name} showcase ${idx + 1}`}
-                    className="w-full h-full object-cover opacity-90"
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
-              </div>
-            ))}
+        {/* ── INFINITE MARQUEE STRIP (NO CROPPING, CONTINUOUS PLAY) ── */}
+        <div
+          className="w-full overflow-hidden relative mb-8 sm:mb-14 bg-[#0a0a0a] select-none"
+          style={{ height: 'clamp(220px, 38vw, 520px)' }}
+        >
+          {/* CSS keyframe is injected once; continuous smooth 60fps loop with no pause on hover */}
+          <style>{`
+            @keyframes biz-marquee {
+              0%   { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .biz-marquee-track {
+              display: flex;
+              flex-wrap: nowrap;
+              width: max-content;
+              height: 100%;
+              animation: biz-marquee ${marqueeDuration}s linear infinite;
+              will-change: transform;
+            }
+            .biz-marquee-img {
+              flex-shrink: 0;
+              height: 100%;
+              width: auto;
+              max-width: none;
+              object-fit: contain;
+              display: block;
+            }
+            .biz-marquee-vid {
+              flex-shrink: 0;
+              height: 100%;
+              width: auto;
+              max-width: none;
+              object-fit: contain;
+              display: block;
+            }
+          `}</style>
+
+          {/* The track contains baseStrip × 2 for seamless looping without pause on hover */}
+          <div className="biz-marquee-track">
+            {/* copy 1 */}
+            {baseStrip.map((med, idx) =>
+              isVideo(med) ? (
+                <video
+                  key={`a-${idx}`}
+                  src={med.url}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="biz-marquee-vid"
+                />
+              ) : (
+                <img
+                  key={`a-${idx}`}
+                  src={med.url}
+                  alt={`${project.name} – ${idx + 1}`}
+                  className="biz-marquee-img"
+                  draggable={false}
+                  loading="eager"
+                />
+              )
+            )}
+            {/* copy 2 — identical, seamlessly continues copy 1 */}
+            {baseStrip.map((med, idx) =>
+              isVideo(med) ? (
+                <video
+                  key={`b-${idx}`}
+                  src={med.url}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="biz-marquee-vid"
+                />
+              ) : (
+                <img
+                  key={`b-${idx}`}
+                  src={med.url}
+                  alt={`${project.name} – ${idx + 1}`}
+                  className="biz-marquee-img"
+                  draggable={false}
+                  loading="eager"
+                />
+              )
+            )}
           </div>
 
-          {/* Slider Prev / Next Controls if > 1 item */}
-          {showcaseMedia.length > 1 && (
-            <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-6 z-20 flex items-center gap-2 sm:gap-3">
-              <button
-                onClick={() => setShowcaseIndex((prev) => (prev === 0 ? showcaseMedia.length - 1 : prev - 1))}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/80 border border-white/20 text-white font-mono hover:border-[#f2603e] hover:text-[#f2603e] flex items-center justify-center transition-colors text-sm sm:text-base cursor-pointer"
-                aria-label="Previous showcase slide"
-              >
-                ‹
-              </button>
-              <div className="flex gap-1 sm:gap-1.5">
-                {showcaseMedia.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setShowcaseIndex(idx)}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      showcaseIndex === idx ? 'w-5 sm:w-6 bg-[#f2603e]' : 'w-1.5 sm:w-2 bg-white/30'
-                    }`}
-                    aria-label={`Slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={() => setShowcaseIndex((prev) => (prev + 1) % showcaseMedia.length)}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/80 border border-white/20 text-white font-mono hover:border-[#f2603e] hover:text-[#f2603e] flex items-center justify-center transition-colors text-sm sm:text-base cursor-pointer"
-                aria-label="Next showcase slide"
-              >
-                ›
-              </button>
-            </div>
-          )}
+          {/* soft edge masks so strip fades at left/right borders */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-24 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-24 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10" />
         </div>
 
         {/* EMBEDDED SOFTWARE DOWNLOAD & TRIAL STATION (FOR SOFTWARE SOLUTIONS) */}

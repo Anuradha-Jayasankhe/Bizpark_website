@@ -26,7 +26,7 @@ export default function Process() {
 
   return (
     <section id="process" className="py-28 bg-[#0d0d0d] border-y border-white/10 relative">
-      <div className="max-w-[1240px] mx-auto px-6 sm:px-8">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
         
         {/* Section Head */}
         <div className="max-w-2xl mb-16">

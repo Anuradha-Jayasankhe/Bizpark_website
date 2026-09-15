@@ -154,7 +154,7 @@ Copyright (c) 2026 bizparkstudio. All rights reserved.
         SOFTWARE
       </div>
 
-      <div className="max-w-[1240px] mx-auto px-6 sm:px-8 relative z-10">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
         
         {/* Navigation Breadcrumb */}
         <div className="mb-10 flex items-center justify-between">

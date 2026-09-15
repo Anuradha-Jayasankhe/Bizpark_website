@@ -36,7 +36,7 @@ export default function Products({ showGrid = true }) {
         </div>
       )}
 
-      <div className="max-w-[1240px] mx-auto px-0">
+      <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
         
         {/* Section Head */}
         <div className="max-w-2xl mb-10">

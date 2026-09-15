@@ -15,7 +15,7 @@ export default function Footer({ currentPage }) {
     <>
       {/* CTA BANNER */}
       <section className="bg-[#f2603e] text-[#0a0a0a] py-20 relative overflow-hidden">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sm:gap-8">
+        <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sm:gap-8">
           <h2 className="font-chakra font-semibold text-2xl sm:text-4xl lg:text-5xl uppercase leading-tight max-w-2xl">
             Got a project in mind?<br />
             Let's build the plan together.
@@ -31,7 +31,7 @@ export default function Footer({ currentPage }) {
 
       {/* FOOTER */}
       <footer id="footer" className="pt-20 pb-8 bg-[#0a0a0a] text-[#f5f4ef] border-t border-white/10">
-        <div className="max-w-[1240px] mx-auto px-6 sm:px-8">
+        <div className="max-w-[1480px] 2xl:max-w-[1640px] mx-auto px-4 sm:px-8 lg:px-12">
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 pb-16 border-b border-white/10">
             

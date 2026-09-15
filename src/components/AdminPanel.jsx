@@ -349,12 +349,10 @@ export default function AdminPanel() {
 
   const handleDeleteProject = (projId) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
-    const newCategories = storeData.categories.map((cat) => {
-      if (cat.key === selectedCategoryKey) {
-        return { ...cat, projects: cat.projects.filter((p) => p.id !== projId) };
-      }
-      return cat;
-    });
+    const newCategories = (storeData.categories || []).map((cat) => ({
+      ...cat,
+      projects: (cat.projects || []).filter((p) => p.id !== projId)
+    }));
     const updatedSoftwareProds = newCategories.find((c) => c.key === 'software-solutions')?.projects || [];
     handleSaveAll({
       ...storeData,
