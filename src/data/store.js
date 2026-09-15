@@ -505,7 +505,8 @@ export const initialSettings = {
   web3formsKey: '68a920d3-df9e-456d-84d8-feb25b489cd5',
   linkedin: 'https://www.linkedin.com/company/bizparkstudio/',
   facebook: 'https://www.facebook.com/bizparkstudio',
-  instagram: 'https://www.instagram.com/bizparkstudio'
+  instagram: 'https://www.instagram.com/bizparkstudio',
+  tiktok: 'https://www.tiktok.com/@bizpark_studio'
 };
 
 export const initialInquiries = [
@@ -554,6 +555,9 @@ export function getStoreData() {
           }
           if (!parsed.settings.instagram) {
             parsed.settings.instagram = 'https://www.instagram.com/bizparkstudio';
+          }
+          if (!parsed.settings.tiktok) {
+            parsed.settings.tiktok = 'https://www.tiktok.com/@bizpark_studio';
           }
           if (!parsed.settings.address) {
             parsed.settings.address = 'Colombo, Sri Lanka';

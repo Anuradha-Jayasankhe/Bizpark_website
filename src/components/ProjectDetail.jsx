@@ -545,6 +545,11 @@ Copyright (c) 2026 bizparkstudio. All rights reserved.
                       Instagram
                     </a>
                   )}
+                  {socials.tiktok && (
+                    <a href={socials.tiktok} target="_blank" rel="noreferrer" className="bg-[#141413] hover:bg-white/10 text-white px-2.5 py-1 border border-white/10 cut-sm text-[10px]">
+                      TikTok
+                    </a>
+                  )}
                   {socials.twitter && (
                     <a href={socials.twitter} target="_blank" rel="noreferrer" className="bg-[#141413] hover:bg-white/10 text-white px-2.5 py-1 border border-white/10 cut-sm text-[10px]">
                       Twitter / X
