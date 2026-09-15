@@ -412,6 +412,17 @@ export default function Navbar({ currentPage }) {
                   <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
               </a>
+              <a
+                href="https://www.tiktok.com/@bizpark_studio"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="p-2 bg-[#1a1a19] border border-white/10 hover:border-[#f2603e] text-[#95928a] hover:text-[#f2603e] rounded transition-colors"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 448 512">
+                  <path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z" />
+                </svg>
+              </a>
             </div>
 
             <div className="text-center pt-0.5">

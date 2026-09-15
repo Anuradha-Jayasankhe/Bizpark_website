@@ -457,7 +457,7 @@ export default function ContactPage() {
               <p className="text-xs text-[#95928a] leading-relaxed">
                 Follow our latest project rollouts, case studies, and engineering updates:
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
                 <a
                   href="https://www.linkedin.com/company/bizparkstudio/"
                   target="_blank"
@@ -494,6 +494,18 @@ export default function ContactPage() {
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
                   </svg>
                   <span>Instagram</span>
+                </a>
+
+                <a
+                  href="https://www.tiktok.com/@bizpark_studio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 p-2.5 bg-[#1a1a19] border border-white/10 hover:border-[#f2603e] text-white text-xs font-mono rounded cut-sm transition-all hover:-translate-y-0.5"
+                >
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 448 512">
+                    <path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z" />
+                  </svg>
+                  <span>TikTok</span>
                 </a>
               </div>
             </div>

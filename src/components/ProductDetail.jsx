@@ -311,6 +311,17 @@ Copyright (c) 2026 bizparkstudio. All rights reserved.
                     <span>↗</span>
                   </a>
                 )}
+                {socials.tiktok && (
+                  <a
+                    href={socials.tiktok}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bg-[#141413] hover:bg-[#f2603e] text-[#95928a] hover:text-black border border-white/10 hover:border-transparent p-3.5 cut-sm font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-between transition-all"
+                  >
+                    <span>TikTok</span>
+                    <span>↗</span>
+                  </a>
+                )}
                 {socials.twitter && (
                   <a
                     href={socials.twitter}

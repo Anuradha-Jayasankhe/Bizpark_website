@@ -35,6 +35,7 @@ export default function AdminPanel() {
       linkedin: 'https://www.linkedin.com/company/bizparkstudio/',
       facebook: 'https://www.facebook.com/bizparkstudio',
       instagram: 'https://www.instagram.com/bizparkstudio',
+      tiktok: 'https://www.tiktok.com/@bizpark_studio',
       adminUsername: 'admin',
       adminPassword: 'bizpark123',
       backendUrl: storedBackend || '',
@@ -954,6 +955,13 @@ export default function AdminPanel() {
                           placeholder="Instagram URL"
                           value={(editingProject.socials && editingProject.socials.instagram) || ''}
                           onChange={(e) => setEditingProject({ ...editingProject, socials: { ...(editingProject.socials || {}), instagram: e.target.value } })}
+                          className="bg-[#141413] border border-white/10 p-2.5 text-xs font-mono text-white outline-none cut-sm"
+                        />
+                        <input
+                          type="text"
+                          placeholder="TikTok URL"
+                          value={(editingProject.socials && editingProject.socials.tiktok) || ''}
+                          onChange={(e) => setEditingProject({ ...editingProject, socials: { ...(editingProject.socials || {}), tiktok: e.target.value } })}
                           className="bg-[#141413] border border-white/10 p-2.5 text-xs font-mono text-white outline-none cut-sm"
                         />
                         <input
@@ -2372,6 +2380,19 @@ export default function AdminPanel() {
                     value={settingsState.instagram || ''}
                     onChange={(e) => setSettingsState({ ...settingsState, instagram: e.target.value })}
                     placeholder="https://www.instagram.com/bizparkstudio"
+                    className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-[#95928a] uppercase mb-2">
+                    TikTok Profile URL
+                  </label>
+                  <input
+                    type="text"
+                    value={settingsState.tiktok || ''}
+                    onChange={(e) => setSettingsState({ ...settingsState, tiktok: e.target.value })}
+                    placeholder="https://www.tiktok.com/@bizpark_studio"
                     className="w-full bg-[#0a0a0a] border border-white/10 focus:border-[#f2603e] p-3 text-xs font-mono text-white outline-none cut-sm"
                   />
                 </div>
