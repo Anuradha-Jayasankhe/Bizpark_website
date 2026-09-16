@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { getStoreData } from '../data/store';
 const logoImg = '/images/logo.png';
 
 export default function Navbar({ currentPage }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [companyEmail, setCompanyEmail] = useState(() => getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
+
+  useEffect(() => {
+    const handleStoreUpdate = () => {
+      setCompanyEmail(getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
+    };
+    window.addEventListener('bizpark_store_updated', handleStoreUpdate);
+    return () => window.removeEventListener('bizpark_store_updated', handleStoreUpdate);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,22 +42,30 @@ export default function Navbar({ currentPage }) {
 
   const scrollToSection = (id) => {
     setMobileMenuOpen(false);
+    if (id === 'top') {
+      if (window.location.pathname !== '/') {
+        window.location.href = '/';
+        return;
+      }
+      window.history.replaceState({}, '', '/');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     if (id === 'contact') {
-      window.location.hash = '#contact';
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      window.location.href = '/contact';
       return;
     }
     if (id === 'about') {
-      window.location.hash = '#about';
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      window.location.href = '/about';
       return;
     }
     if (currentPage !== 'home') {
-      window.location.hash = `#${id}`;
+      window.location.href = `/#${id}`;
     } else {
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+        window.history.replaceState({}, '', `/#${id}`);
       }
     }
   };
@@ -120,11 +138,7 @@ export default function Navbar({ currentPage }) {
                 Work
               </a>
               <a
-                href="#category-software-solutions"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.hash = '#category-software-solutions';
-                }}
+                href="/products"
                 className="hover:text-white transition-colors duration-200"
               >
                 Products
@@ -137,15 +151,13 @@ export default function Navbar({ currentPage }) {
                 Submit Requirement
               </a>
               <a
-                href="#about"
-                onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}
+                href="/about"
                 className={`transition-colors duration-200 ${currentPage === 'about' ? 'text-[#f2603e] font-bold' : 'hover:text-white'}`}
               >
                 About
               </a>
               <a
-                href="#contact"
-                onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}
+                href="/contact"
                 className={`transition-colors duration-200 ${currentPage === 'contact' ? 'text-[#f2603e] font-bold' : 'hover:text-white'}`}
               >
                 Contact
@@ -269,12 +281,7 @@ export default function Navbar({ currentPage }) {
           </a>
 
           <a
-            href="#category-software-solutions"
-            onClick={(e) => {
-              e.preventDefault();
-              setMobileMenuOpen(false);
-              window.location.hash = '#category-software-solutions';
-            }}
+            href="/products"
             className="flex items-center justify-between px-3.5 py-3 rounded text-sm sm:text-base font-medium text-[#95928a] hover:text-white hover:bg-white/5 transition-all group"
           >
             <div className="flex items-center gap-3">
@@ -298,8 +305,7 @@ export default function Navbar({ currentPage }) {
           </a>
 
           <a
-            href="#about"
-            onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}
+            href="/about"
             className={`flex items-center justify-between px-3.5 py-3 rounded text-sm sm:text-base font-medium transition-all group ${
               currentPage === 'about'
                 ? 'text-[#f2603e] bg-white/5 font-bold'
@@ -314,8 +320,7 @@ export default function Navbar({ currentPage }) {
           </a>
 
           <a
-            href="#contact"
-            onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}
+            href="/contact"
             className={`flex items-center justify-between px-3.5 py-3 rounded text-sm sm:text-base font-medium transition-all group ${
               currentPage === 'contact'
                 ? 'text-[#f2603e] bg-white/5 font-bold'
@@ -427,10 +432,10 @@ export default function Navbar({ currentPage }) {
 
             <div className="text-center pt-0.5">
               <a
-                href="mailto:bizparkstudio@gmail.com"
+                href={`mailto:${companyEmail}`}
                 className="text-[11px] text-[#95928a] hover:text-[#f2603e] font-mono transition-colors block truncate"
               >
-                bizparkstudio@gmail.com
+                {companyEmail}
               </a>
             </div>
           </div>

@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getStoreData } from '../data/store';
 const logoImg = '/images/logo.png';
 
 export default function Footer({ currentPage }) {
+  const [companyEmail, setCompanyEmail] = useState(() => getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
+
+  useEffect(() => {
+    const handleStoreUpdate = () => {
+      setCompanyEmail(getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
+    };
+    window.addEventListener('bizpark_store_updated', handleStoreUpdate);
+    return () => window.removeEventListener('bizpark_store_updated', handleStoreUpdate);
+  }, []);
+
   const scrollTo = (id) => {
     if (currentPage !== 'home') {
       window.location.hash = `#${id}`;
@@ -139,12 +150,7 @@ export default function Footer({ currentPage }) {
                 Studio
               </h5>
               <a
-                href="#about"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.hash = '#about';
-                  window.scrollTo({ top: 0, behavior: 'instant' });
-                }}
+                href="/about"
                 className="block text-sm text-[#95928a] hover:text-[#f2603e] transition-colors"
               >
                 About
@@ -164,8 +170,7 @@ export default function Footer({ currentPage }) {
                 Process
               </a>
               <a
-                href="#category-software-solutions"
-                onClick={(e) => { e.preventDefault(); window.location.hash = '#category-software-solutions'; }}
+                href="/products"
                 className="block text-sm text-[#95928a] hover:text-[#f2603e] transition-colors"
               >
                 Products
@@ -206,10 +211,10 @@ export default function Footer({ currentPage }) {
                 Contact
               </h5>
               <a
-                href="mailto:bizparkstudio@gmail.com"
+                href={`mailto:${companyEmail}`}
                 className="block text-sm text-[#95928a] hover:text-[#f2603e] transition-colors"
               >
-                bizparkstudio@gmail.com
+                {companyEmail}
               </a>
               <a
                 href="tel:+94729545538"

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { submitInquiry } from '../utils/mailService';
+import { getStoreData } from '../data/store';
 
 export default function RequirementForm() {
+  const [companyEmail, setCompanyEmail] = useState(() => getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,6 +20,14 @@ export default function RequirementForm() {
   const [errorMessage, setErrorMessage] = useState('');
   const [whatsappLink, setWhatsappLink] = useState('');
   const [emailDelivered, setEmailDelivered] = useState(false);
+
+  useEffect(() => {
+    const handleStoreUpdate = () => {
+      setCompanyEmail(getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
+    };
+    window.addEventListener('bizpark_store_updated', handleStoreUpdate);
+    return () => window.removeEventListener('bizpark_store_updated', handleStoreUpdate);
+  });
 
   const serviceOptions = [
     { id: 'dev', label: 'Software Development' },
@@ -117,7 +127,7 @@ export default function RequirementForm() {
                 </h3>
                 <p className="text-sm text-[#95928a] mt-1 font-mono">
                   {emailDelivered
-                    ? 'Your project requirement was dispatched to bizparkstudio@gmail.com and saved to our Admin Leads Vault.'
+                    ? `Your project requirement was dispatched to ${companyEmail} and saved to our Admin Leads Vault.`
                     : 'Your project requirement has been safely logged in our Admin Leads Vault. Our team will review it shortly.'}
                 </p>
               </div>
@@ -325,7 +335,7 @@ export default function RequirementForm() {
             </button>
 
             <p className="text-[11px] text-[#605e58] font-mono text-center">
-              Direct email delivery to bizparkstudio@gmail.com · Guaranteed confidentiality
+              Direct email delivery to {companyEmail} · Guaranteed confidentiality
             </p>
 
           </div>
