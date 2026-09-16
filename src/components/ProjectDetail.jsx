@@ -304,12 +304,9 @@ Copyright (c) 2026 bizparkstudio. All rights reserved.
               )}
             </div>
 
-            <h1 className="font-chakra text-3xl sm:text-5xl lg:text-6xl text-white uppercase font-bold tracking-tight leading-[1.1] mb-3 sm:mb-4 break-words">
+            <h1 className="font-chakra text-3xl sm:text-5xl lg:text-6xl text-white uppercase font-bold tracking-tight leading-[1.1] break-words">
               {project.name}
             </h1>
-            <p className="text-sm sm:text-base text-[#95928a] font-medium max-w-3xl leading-relaxed">
-              {project.description || project.shortDescription}
-            </p>
           </div>
 
           {/* Action CTAs: Download & Live Website */}
