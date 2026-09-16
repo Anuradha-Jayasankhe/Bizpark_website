@@ -10,6 +10,7 @@ import multer from 'multer';
 import { SiteData } from './models/SiteData.js';
 import { Inquiry } from './models/Inquiry.js';
 import { defaultSeedData } from './defaultData.js';
+import { UploadedImage } from './models/UploadedImage.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -153,20 +154,9 @@ try {
 }
 app.use('/images', express.static(publicImagesDir));
 
-// Multer storage: memory storage if on Vercel, disk storage locally
-const isVercel = !!process.env.VERCEL;
-const storage = isVercel
-  ? multer.memoryStorage()
-  : multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, publicImagesDir);
-      },
-      filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname) || '.jpg';
-        const safeName = `upload_${Date.now()}${ext}`;
-        cb(null, safeName);
-      }
-    });
+// Multer memory storage: Universal across both Vercel Serverless and local dev.
+// Uploads go straight to MongoDB Atlas UploadedImage collection (zero filesystem dependency).
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -272,20 +262,131 @@ apiRouter.get('/health', async (req, res) => {
   });
 });
 
+// Helper function to recursively offload base64 images into UploadedImage collection
+async function offloadBase64Images(payload) {
+  if (!payload || typeof payload !== 'object') return payload;
+
+  async function offloadVal(val) {
+    if (typeof val !== 'string' || (!val.startsWith('data:image/') && !val.startsWith('data:video/'))) {
+      return val;
+    }
+    const matches = val.match(/^data:([^;]+);base64,(.+)$/);
+    if (!matches) return val;
+
+    try {
+      const contentType = matches[1];
+      const base64Data = matches[2];
+      const imgDoc = await UploadedImage.create({
+        data: base64Data,
+        contentType,
+        size: Buffer.byteLength(base64Data, 'base64')
+      });
+      return `/api/images/${imgDoc._id}`;
+    } catch (e) {
+      console.warn('Failed to offload base64 image:', e.message);
+      return val;
+    }
+  }
+
+  async function walk(obj) {
+    if (!obj || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) {
+      for (let i = 0; i < obj.length; i++) {
+        if (typeof obj[i] === 'string') {
+          obj[i] = await offloadVal(obj[i]);
+        } else if (typeof obj[i] === 'object') {
+          await walk(obj[i]);
+        }
+      }
+    } else {
+      for (const k of Object.keys(obj)) {
+        if (typeof obj[k] === 'string') {
+          obj[k] = await offloadVal(obj[k]);
+        } else if (typeof obj[k] === 'object') {
+          await walk(obj[k]);
+        }
+      }
+    }
+    return obj;
+  }
+
+  return await walk(payload);
+}
+
 // 2. IMAGE UPLOAD ENDPOINT
-apiRouter.post('/upload-image', upload.single('image'), (req, res) => {
+apiRouter.post('/upload-image', upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
+
+  try {
+    if (mongoose.connection.readyState === 1 || await connectDB()) {
+      let base64Data = '';
+      const contentType = req.file.mimetype || 'image/webp';
+
+      if (req.file.buffer) {
+        base64Data = req.file.buffer.toString('base64');
+      } else if (req.file.path && fs.existsSync(req.file.path)) {
+        base64Data = fs.readFileSync(req.file.path).toString('base64');
+      }
+
+      if (base64Data) {
+        const imgDoc = await UploadedImage.create({
+          data: base64Data,
+          contentType,
+          size: req.file.size || Buffer.byteLength(base64Data, 'base64'),
+          filename: req.file.originalname || ''
+        });
+        const imageUrl = `/api/images/${imgDoc._id}`;
+        console.log('✓ Image saved to MongoDB Atlas UploadedImage:', imageUrl);
+        return res.json({ success: true, url: imageUrl });
+      }
+    }
+  } catch (dbErr) {
+    console.warn('Could not save image to MongoDB, falling back:', dbErr.message);
+  }
+
+  if (req.file.filename) {
+    const imageUrl = `/images/${req.file.filename}`;
+    console.log('✓ Image saved locally to disk:', imageUrl);
+    return res.json({ success: true, url: imageUrl });
+  }
+
   if (req.file.buffer) {
     const base64 = req.file.buffer.toString('base64');
     const imageUrl = `data:${req.file.mimetype};base64,${base64}`;
-    console.log('✓ Image converted to base64 Data URI (serverless mode)');
     return res.json({ success: true, url: imageUrl });
   }
-  const imageUrl = `/images/${req.file.filename}`;
-  console.log('✓ Image uploaded:', imageUrl);
-  res.json({ success: true, url: imageUrl });
+
+  return res.status(500).json({ error: 'Failed to process uploaded image' });
+});
+
+// 2.1 SERVE UPLOADED IMAGES FROM MONGODB ATLAS
+apiRouter.get('/images/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || !mongoose.isValidObjectId(id)) {
+      return res.status(400).send('Invalid image ID');
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
+
+    const img = await UploadedImage.findById(id).lean();
+    if (!img || !img.data) {
+      return res.status(404).send('Image not found');
+    }
+
+    const imgBuffer = Buffer.from(img.data, 'base64');
+    res.set('Content-Type', img.contentType || 'image/webp');
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.set('Content-Length', imgBuffer.length);
+    return res.send(imgBuffer);
+  } catch (err) {
+    console.error('Error serving image:', err);
+    return res.status(500).send('Internal server error');
+  }
 });
 
 // 3. GET SITE DATA
@@ -349,6 +450,11 @@ apiRouter.post('/data', async (req, res) => {
       teamMembers: Array.isArray(req.body.teamMembers) ? req.body.teamMembers : [],
       settings: req.body.settings || {}
     };
+
+    // Automatically offload any embedded base64 images into UploadedImage collection
+    // to keep the SiteData document super lightweight (< 50 KB)
+    await offloadBase64Images(updatePayload);
+
     const saved = await SiteData.findOneAndUpdate(
       { key: 'main_site_data' },
       { $set: updatePayload },

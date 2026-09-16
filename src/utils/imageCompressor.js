@@ -10,7 +10,7 @@
  * - Ultra-fast web loading speeds
  */
 
-export async function compressImage(file, maxWidth = 1280, quality = 0.78) {
+export async function compressImage(file, maxWidth = 1200, quality = 0.75) {
   if (!file || !file.type || !file.type.startsWith('image/')) {
     return file;
   }
