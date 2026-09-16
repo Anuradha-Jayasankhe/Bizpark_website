@@ -76,6 +76,7 @@ export default function Hero() {
             </div>
 
             <h1 className="font-chakra font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-[4.2rem] uppercase tracking-tight text-[#f5f4ef] leading-[1.08] break-words">
+              <span className="sr-only">Bizpark Studio: </span>
               {currentBanner.title || 'We build the digital side of your business.'}
             </h1>
 

@@ -91,11 +91,11 @@ export default function Navbar({ currentPage }) {
               }}
               className="flex items-center gap-2.5 sm:gap-3 group flex-shrink-0"
             >
-              <div className="w-9 h-9 sm:w-11 sm:h-11 flex-shrink-0 relative overflow-hidden rounded">
+              <div className="relative flex-shrink-0 overflow-hidden rounded w-9 h-9 sm:w-11 sm:h-11">
                 <img
                   src={logoImg}
                   alt="bizparkstudio logo"
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     if (e.target.nextElementSibling) {
@@ -103,13 +103,13 @@ export default function Navbar({ currentPage }) {
                     }
                   }}
                 />
-                <svg className="w-9 h-9 sm:w-11 sm:h-11 hidden" viewBox="0 0 100 100" fill="none">
+                <svg className="hidden w-9 h-9 sm:w-11 sm:h-11" viewBox="0 0 100 100" fill="none">
                   <path d="M50 6 L94 44 L60 74 L60 44 L36 64 L36 90 L6 64 Z" fill="#F2603E" />
                   <path d="M50 26 L74 44 L36 90 L36 64 L60 44 Z" fill="#F5F4EF" />
                   <path d="M50 62 L60 74 L60 90 L50 82 Z" fill="#0a0a0a" />
                 </svg>
               </div>
-              <span className="font-chakra font-semibold text-base sm:text-lg tracking-wider text-white lowercase whitespace-nowrap">
+              <span className="text-base font-semibold tracking-wider text-white lowercase font-chakra sm:text-lg whitespace-nowrap">
                 bizpark<span className="text-[#f2603e]">s</span>tudio
               </span>
             </a>
@@ -119,34 +119,34 @@ export default function Navbar({ currentPage }) {
               <a
                 href="#services"
                 onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                className="hover:text-white transition-colors duration-200"
+                className="transition-colors duration-200 hover:text-white"
               >
                 Services
               </a>
               <a
                 href="#process"
                 onClick={(e) => { e.preventDefault(); scrollToSection('process'); }}
-                className="hover:text-white transition-colors duration-200"
+                className="transition-colors duration-200 hover:text-white"
               >
                 Process
               </a>
               <a
                 href="#work"
                 onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
-                className="hover:text-white transition-colors duration-200"
+                className="transition-colors duration-200 hover:text-white"
               >
                 Work
               </a>
               <a
                 href="/products"
-                className="hover:text-white transition-colors duration-200"
+                className="transition-colors duration-200 hover:text-white"
               >
                 Products
               </a>
               <a
                 href="#requirement-form"
                 onClick={(e) => { e.preventDefault(); scrollToSection('requirement-form'); }}
-                className="hover:text-white transition-colors duration-200"
+                className="transition-colors duration-200 hover:text-white"
               >
                 Submit Requirement
               </a>
@@ -219,10 +219,10 @@ export default function Navbar({ currentPage }) {
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-[#121211]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
-              <img src={logoImg} alt="logo" className="w-full h-full object-contain" />
+            <div className="flex-shrink-0 w-8 h-8 overflow-hidden rounded">
+              <img src={logoImg} alt="logo" className="object-contain w-full h-full" />
             </div>
-            <span className="font-chakra font-bold text-base tracking-wider text-white lowercase">
+            <span className="text-base font-bold tracking-wider text-white lowercase font-chakra">
               bizpark<span className="text-[#f2603e]">s</span>tudio
             </span>
           </div>
@@ -239,7 +239,7 @@ export default function Navbar({ currentPage }) {
         </div>
 
         {/* Drawer Navigation Links */}
-        <div className="flex-1 overflow-y-auto px-4 py-5 space-y-1">
+        <div className="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
           <div className="px-3 pb-2 text-[10px] font-mono uppercase tracking-widest text-[#95928a]">
             Navigation
           </div>
@@ -356,7 +356,7 @@ export default function Navbar({ currentPage }) {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+            <div className="grid grid-cols-2 gap-2 font-mono text-xs">
               <a
                 href="https://wa.me/94729545538?text=Hello%20Bizpark%20Studio%2C%20I%20would%20like%20to%20inquire%20about%20your%20services%21"
                 target="_blank"

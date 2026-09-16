@@ -69,13 +69,33 @@ export default function App() {
     if (structuredData) {
       structuredData.textContent = JSON.stringify({
         '@context': 'https://schema.org',
-        '@type': 'Organization',
-        name: 'Bizpark Studio',
-        url: siteUrl,
-        logo: `${siteUrl}/images/logo.png`,
-        description: 'Web development, social media marketing, and branding studio for growing businesses.',
-        areaServed: 'Sri Lanka',
-        sameAs: [],
+        '@graph': [
+          {
+            '@type': 'Organization',
+            name: 'Bizpark Studio',
+            alternateName: 'Bizpark Studio Sri Lanka',
+            url: siteUrl,
+            logo: `${siteUrl}/images/logo.png`,
+            description: 'Bizpark Studio provides web development, custom software, digital marketing, and branding for businesses worldwide.',
+            areaServed: 'Worldwide',
+            sameAs: [
+              'https://www.facebook.com/bizparkstudio',
+              'https://www.instagram.com/bizparkstudio',
+              'https://www.linkedin.com/company/bizparkstudio/',
+              'https://www.tiktok.com/@bizpark_studio',
+            ],
+          },
+          {
+            '@type': 'WebSite',
+            name: 'Bizpark Studio',
+            url: siteUrl,
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: `${siteUrl}/?q={search_term_string}`,
+              'query-input': 'required name=search_term_string',
+            },
+          },
+        ],
       });
     }
   }, [route]);
