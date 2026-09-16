@@ -20,6 +20,67 @@ export default function App() {
   const [dataState, setDataState] = useState({ status: 'ready', error: '' });
 
   useEffect(() => {
+    const pageSeo = {
+      home: {
+        title: 'Bizpark Studio | Web Development, Digital Marketing & Branding',
+        description: 'Bizpark Studio helps growing businesses with web development, social media marketing, branding, and digital solutions from one accountable team.',
+      },
+      about: {
+        title: 'About Bizpark Studio | Digital Solutions Team',
+        description: 'Meet Bizpark Studio, a Sri Lankan team combining software development, marketing, and branding for growing businesses.',
+      },
+      contact: {
+        title: 'Contact Bizpark Studio | Start Your Project',
+        description: 'Contact Bizpark Studio for web development, digital marketing, branding, and custom software solutions in Sri Lanka.',
+      },
+      category: {
+        title: 'Our Work | Bizpark Studio Projects',
+        description: 'Explore selected web development, branding, and digital projects by Bizpark Studio.',
+      },
+      project: {
+        title: 'Project Case Study | Bizpark Studio',
+        description: 'Explore a Bizpark Studio project case study, including the approach, deliverables, and technology used.',
+      },
+      product: {
+        title: 'Digital Product | Bizpark Studio',
+        description: 'Explore a digital product created by Bizpark Studio for modern businesses.',
+      },
+      admin: {
+        title: 'Admin | Bizpark Studio',
+        description: 'Bizpark Studio administration panel.',
+      },
+    };
+
+    const seo = pageSeo[route.page] || pageSeo.home;
+    const siteUrl = window.location.origin;
+    const canonicalUrl = `${siteUrl}${window.location.pathname}`;
+
+    document.title = seo.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', seo.description);
+    document.querySelector('meta[name="robots"]')?.setAttribute('content', route.page === 'admin' ? 'noindex, nofollow' : 'index, follow');
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', seo.title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', seo.description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonicalUrl);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', seo.title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', seo.description);
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', canonicalUrl);
+
+    const structuredData = document.querySelector('script[type="application/ld+json"]');
+    if (structuredData) {
+      structuredData.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Bizpark Studio',
+        url: siteUrl,
+        logo: `${siteUrl}/images/logo.png`,
+        description: 'Web development, social media marketing, and branding studio for growing businesses.',
+        areaServed: 'Sri Lanka',
+        sameAs: [],
+      });
+    }
+  }, [route]);
+
+  useEffect(() => {
     let isMounted = true;
 
     // Gracefully sync from backend in background; seamlessly fallback to store data
