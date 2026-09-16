@@ -139,12 +139,7 @@ export default function Footer({ currentPage }) {
                 Studio
               </h5>
               <a
-                href="#about"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.hash = '#about';
-                  window.scrollTo({ top: 0, behavior: 'instant' });
-                }}
+                href="/about"
                 className="block text-sm text-[#95928a] hover:text-[#f2603e] transition-colors"
               >
                 About
@@ -164,8 +159,7 @@ export default function Footer({ currentPage }) {
                 Process
               </a>
               <a
-                href="#category-software-solutions"
-                onClick={(e) => { e.preventDefault(); window.location.hash = '#category-software-solutions'; }}
+                href="/products"
                 className="block text-sm text-[#95928a] hover:text-[#f2603e] transition-colors"
               >
                 Products

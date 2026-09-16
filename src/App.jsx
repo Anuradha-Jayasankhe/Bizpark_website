@@ -99,7 +99,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const handleHashChange = () => {
+    const handleLocationChange = () => {
+      const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+      if (pathname === '/about' || pathname === '/contact' || pathname === '/products') {
+        const page = pathname.slice(1);
+        setRoute(page === 'products' ? { page: 'category', id: 'software-solutions' } : { page, id: null });
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        return;
+      }
+
       const hash = window.location.hash;
       if (
         hash.startsWith('#software-') ||
@@ -147,10 +155,14 @@ export default function App() {
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    handleHashChange();
+    window.addEventListener('hashchange', handleLocationChange);
+    window.addEventListener('popstate', handleLocationChange);
+    handleLocationChange();
 
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleLocationChange);
+      window.removeEventListener('popstate', handleLocationChange);
+    };
   }, []);
 
   useEffect(() => {
