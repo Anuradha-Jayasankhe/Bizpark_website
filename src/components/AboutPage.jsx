@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getStoreData } from '../data/store';
 
 export default function AboutPage() {
   const [storeData, setStoreData] = useState(getStoreData());
+  const [activeMemberId, setActiveMemberId] = useState(null);
+  const cardRefs = useRef({});
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -14,6 +16,61 @@ export default function AboutPage() {
   const teamMembers = storeData.teamMembers || [];
   const settings = storeData.settings || {};
   const whatsappNum = settings.whatsappNumber || '+94 72 954 5538';
+
+  // Mobile scroll focus: dynamically reveal colors on the team card currently in viewport center
+  useEffect(() => {
+    let ticking = false;
+
+    const checkActiveCard = () => {
+      // On desktop (width >= 768px), keep standard mouse hover interactions
+      if (typeof window === 'undefined' || window.innerWidth >= 768) {
+        setActiveMemberId(null);
+        ticking = false;
+        return;
+      }
+
+      const viewportHeight = window.innerHeight;
+      const focalPoint = viewportHeight * 0.48; // Screen focal zone
+      let closestKey = null;
+      let minDistance = Infinity;
+
+      Object.entries(cardRefs.current).forEach(([key, el]) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        // Eligible when card is within active reading zone of viewport
+        const isInZone = rect.top < viewportHeight * 0.82 && rect.bottom > viewportHeight * 0.18;
+        if (isInZone) {
+          const cardCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(cardCenter - focalPoint);
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestKey = key;
+          }
+        }
+      });
+
+      setActiveMemberId(closestKey);
+      ticking = false;
+    };
+
+    const onScrollOrResize = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(checkActiveCard);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+
+    // Initial check
+    checkActiveCard();
+
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+    };
+  }, [teamMembers]);
 
   const formatWaNumber = (num) => {
     if (!num) return '94729545538';
@@ -174,67 +231,104 @@ export default function AboutPage() {
 
           {/* Team Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamMembers.map((member, idx) => (
-              <div
-                key={member.id || idx}
-                className="bg-[#141413] border border-white/10 hover:border-[#f2603e] cut transition-all duration-300 group flex flex-col overflow-hidden shadow-xl"
-              >
-                {/* Member Profile Photo Frame */}
-                <div className="aspect-[4/3] w-full relative bg-[#0a0a0a] overflow-hidden border-b border-white/10">
-                  <img
-                    src={member.image || '/images/hero.png'}
-                    alt={member.name}
-                    className="w-full h-full object-cover object-top filter grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
-                    onError={(e) => {
-                      e.target.src = '/images/hero.png';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-transparent pointer-events-none" />
-                  
-                  {/* Badge */}
-                  <div className="absolute top-3 right-3 font-mono text-[10px] uppercase tracking-wider bg-black/80 backdrop-blur-md px-2.5 py-1 text-[#f2603e] border border-white/15 cut-sm">
-                    {member.role ? member.role.split(' ')[0] : 'LEAD'}
-                  </div>
-                </div>
+            {teamMembers.map((member, idx) => {
+              const memberKey = String(member.id || idx);
+              const isActive = activeMemberId === memberKey;
 
-                {/* Member Details */}
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                  <div>
-                    <div className="font-mono text-xs text-[#f2603e] font-bold uppercase tracking-wider mb-1">
-                      {member.role || 'Digital Specialist'}
+              return (
+                <div
+                  key={memberKey}
+                  ref={(el) => {
+                    if (el) {
+                      cardRefs.current[memberKey] = el;
+                    } else {
+                      delete cardRefs.current[memberKey];
+                    }
+                  }}
+                  onClick={() => {
+                    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                      setActiveMemberId(memberKey);
+                    }
+                  }}
+                  className={`bg-[#141413] border cut transition-all duration-500 group flex flex-col overflow-hidden shadow-xl cursor-pointer md:cursor-default ${
+                    isActive
+                      ? 'border-[#f2603e] shadow-[0_14px_45px_rgba(242,96,62,0.22)] -translate-y-1.5 ring-1 ring-[#f2603e]/40'
+                      : 'border-white/10 hover:border-[#f2603e]'
+                  }`}
+                >
+                  {/* Member Profile Photo Frame */}
+                  <div className="aspect-[4/3] w-full relative bg-[#0a0a0a] overflow-hidden border-b border-white/10">
+                    <img
+                      src={member.image || '/images/hero.png'}
+                      alt={member.name}
+                      className={`w-full h-full object-cover object-top filter transition-all duration-700 ease-out ${
+                        isActive
+                          ? 'grayscale-0 scale-105'
+                          : 'grayscale group-hover:grayscale-0 group-hover:scale-105'
+                      }`}
+                      onError={(e) => {
+                        e.target.src = '/images/hero.png';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-transparent pointer-events-none" />
+                    
+                    {/* Badge */}
+                    <div
+                      className={`absolute top-3 right-3 font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 cut-sm border transition-all duration-300 ${
+                        isActive
+                          ? 'bg-[#f2603e] text-black font-bold border-[#f2603e] shadow-[0_0_15px_rgba(242,96,62,0.5)]'
+                          : 'bg-black/80 backdrop-blur-md text-[#f2603e] border-white/15'
+                      }`}
+                    >
+                      {member.role ? member.role.split(' ')[0] : 'LEAD'}
                     </div>
-                    <h3 className="font-chakra font-bold text-2xl text-white uppercase group-hover:text-[#f2603e] transition-colors">
-                      {member.name}
-                    </h3>
-                    <p className="text-xs text-[#95928a] leading-relaxed mt-2.5">
-                      {member.bio || 'Directing technical and design execution across client projects.'}
-                    </p>
                   </div>
 
-                  {/* Contact Links */}
-                  <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono">
-                    {member.email && (
-                      <a
-                        href={`mailto:${member.email}`}
-                        className="text-[#95928a] hover:text-white transition-colors inline-flex items-center gap-1.5"
+                  {/* Member Details */}
+                  <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <div className="font-mono text-xs text-[#f2603e] font-bold uppercase tracking-wider mb-1">
+                        {member.role || 'Digital Specialist'}
+                      </div>
+                      <h3
+                        className={`font-chakra font-bold text-2xl uppercase transition-colors duration-300 ${
+                          isActive
+                            ? 'text-[#f2603e]'
+                            : 'text-white group-hover:text-[#f2603e]'
+                        }`}
                       >
-                        <span>✉</span> Contact
-                      </a>
-                    )}
-                    {member.phone && (
-                      <a
-                        href={`https://wa.me/${formatWaNumber(member.phone)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#25D366] hover:underline inline-flex items-center gap-1 font-bold"
-                      >
-                        <span>💬</span> WhatsApp
-                      </a>
-                    )}
+                        {member.name}
+                      </h3>
+                      <p className="text-xs text-[#95928a] leading-relaxed mt-2.5">
+                        {member.bio || 'Directing technical and design execution across client projects.'}
+                      </p>
+                    </div>
+
+                    {/* Contact Links */}
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+                      {member.email && (
+                        <a
+                          href={`mailto:${member.email}`}
+                          className="text-[#95928a] hover:text-white transition-colors inline-flex items-center gap-1.5"
+                        >
+                          <span>✉</span> Contact
+                        </a>
+                      )}
+                      {member.phone && (
+                        <a
+                          href={`https://wa.me/${formatWaNumber(member.phone)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#25D366] hover:underline inline-flex items-center gap-1 font-bold"
+                        >
+                          <span>💬</span> WhatsApp
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

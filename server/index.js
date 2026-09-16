@@ -302,21 +302,30 @@ apiRouter.get('/data', async (req, res) => {
     if (mongoose.connection.readyState === 1) {
       let data = await SiteData.findOne({ key: 'main_site_data' }).lean();
       if (!data) {
-        // Auto-seed if not present
+        // Auto-seed ONLY on first-time setup when DB is connected but empty
         const seeded = await SiteData.findOneAndUpdate(
           { key: 'main_site_data' },
           { $set: defaultSeedData },
           { upsert: true, new: true, returnDocument: 'after' }
         ).lean();
+        console.log('✓ First-time setup: seeded default data into MongoDB Atlas');
         return res.json(seeded || defaultSeedData);
       }
       return res.json(data);
     }
-    // If DB is temporarily connecting, serve default seed data gracefully
-    return res.json(defaultSeedData);
+    // DB is temporarily unavailable — return 503 so frontend knows NOT to overwrite local data
+    return res.status(503).json({
+      error: 'Database temporarily unavailable',
+      dbState: mongoose.connection.readyState,
+      lastError: cached.lastError || 'MongoDB connection not ready'
+    });
   } catch (err) {
     console.error('Error fetching site data:', err);
-    res.json(defaultSeedData);
+    // Return 503 on error — never return seed data as a fallback
+    res.status(503).json({
+      error: 'Database error while fetching site data',
+      lastError: err.message
+    });
   }
 });
 
