@@ -538,10 +538,12 @@ export function getStoreData() {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && parsed.categories) {
-        if (!parsed.homepageHeroBanners) {
+        // Only fill homepageHeroBanners if the field is completely missing (not if empty array)
+        if (parsed.homepageHeroBanners === undefined || parsed.homepageHeroBanners === null) {
           parsed.homepageHeroBanners = initialHomepageHeroBanners;
         }
-        if (!parsed.teamMembers || parsed.teamMembers.length === 0) {
+        // DO NOT force-inject initialTeamMembers — respect user's saved data even if empty
+        if (parsed.teamMembers === undefined || parsed.teamMembers === null) {
           parsed.teamMembers = initialTeamMembers;
         }
         if (!parsed.settings) {
@@ -570,8 +572,9 @@ export function getStoreData() {
             parsed.settings.address = 'Colombo, Sri Lanka';
           }
         }
-        if (!parsed.inquiries) {
-          parsed.inquiries = initialInquiries;
+        // DO NOT force-inject initialInquiries — inquiries come from MongoDB Inquiry collection
+        if (parsed.inquiries === undefined || parsed.inquiries === null) {
+          parsed.inquiries = [];
         }
         // Always sync softwareProducts to be 100% identical to software-solutions projects!
         const softwareCat = parsed.categories.find((c) => c.key === 'software-solutions');
@@ -594,7 +597,7 @@ export function getStoreData() {
     softwareProducts: defaultSoftware,
     teamMembers: initialTeamMembers,
     settings: initialSettings,
-    inquiries: initialInquiries
+    inquiries: []
   };
   memoryStoreData = initialData;
   return initialData;
@@ -672,29 +675,36 @@ export async function syncFromBackend() {
     });
 
     if (!res.ok) {
+      // Backend returned error (503 = DB unavailable, etc.)
+      // DO NOT overwrite local data — keep what we have and report failure
       const errorBody = await res.json().catch(() => ({}));
-      throw new Error(errorBody.error || `Backend returned ${res.status}`);
+      console.warn(`Backend sync skipped (HTTP ${res.status}): ${errorBody.error || res.statusText}. Local data preserved.`);
+      return { success: false, error: errorBody.error || `Backend returned ${res.status}`, localDataPreserved: true };
     }
 
     const remoteData = await res.json();
     if (!remoteData || !Array.isArray(remoteData.categories)) {
-      throw new Error('Backend returned invalid site data');
+      console.warn('Backend returned invalid site data structure. Local data preserved.');
+      return { success: false, error: 'Backend returned invalid site data', localDataPreserved: true };
     }
 
     const local = getStoreData();
 
     // MongoDB Atlas is the single source of truth for all live website content.
+    // Only use remote data for fields that are actually present in the response.
     const merged = {
       ...local,
       categories: Array.isArray(remoteData.categories) ? remoteData.categories : local.categories,
-      homepageHeroBanners: Array.isArray(remoteData.homepageHeroBanners) ? remoteData.homepageHeroBanners : (local.homepageHeroBanners || initialHomepageHeroBanners),
-      softwareBanners: Array.isArray(remoteData.softwareBanners) ? remoteData.softwareBanners : (local.softwareBanners || initialSoftwareBanners),
-      softwareProducts: Array.isArray(remoteData.softwareProducts) ? remoteData.softwareProducts : (local.softwareProducts || []),
-      teamMembers: Array.isArray(remoteData.teamMembers) ? remoteData.teamMembers : (local.teamMembers || initialTeamMembers),
+      homepageHeroBanners: Array.isArray(remoteData.homepageHeroBanners) ? remoteData.homepageHeroBanners : local.homepageHeroBanners,
+      softwareBanners: Array.isArray(remoteData.softwareBanners) ? remoteData.softwareBanners : local.softwareBanners,
+      softwareProducts: Array.isArray(remoteData.softwareProducts) ? remoteData.softwareProducts : local.softwareProducts,
+      teamMembers: Array.isArray(remoteData.teamMembers) ? remoteData.teamMembers : local.teamMembers,
       settings: {
         ...local.settings,
         ...(remoteData.settings || {})
       },
+      // Preserve local inquiries — inquiries are managed via separate /api/inquiries endpoint
+      inquiries: local.inquiries || [],
       _savedAt: remoteData.updatedAt || new Date().toISOString()
     };
 
@@ -709,15 +719,14 @@ export async function syncFromBackend() {
     window.dispatchEvent(new Event('bizpark_store_updated'));
     return { success: true, data: merged };
   } catch (err) {
-    console.error('Backend sync failed; live site data is unavailable:', err.message);
-    return { success: false, error: err.message };
+    // Network error or fetch failure — preserve local data, do NOT overwrite
+    console.warn('Backend sync failed; local data preserved:', err.message);
+    return { success: false, error: err.message, localDataPreserved: true };
   }
 }
 
-// Automatically initiate background sync on module load
-if (typeof window !== 'undefined') {
-  syncFromBackend();
-}
+// NOTE: Auto-sync on module load REMOVED to prevent race conditions.
+// Sync is now only triggered by App.jsx on mount and AdminPanel when needed.
 
 export async function saveStoreData(data) {
   // 1. Force softwareProducts array to be identical to software-solutions category projects
@@ -758,9 +767,11 @@ export async function saveStoreData(data) {
     if (res.ok) {
       const resultJson = await res.json();
       console.log('✓ Successfully saved site data to MongoDB Atlas cloud database');
-      if (resultJson && resultJson.data) {
-        memoryStoreData = { ...data, ...resultJson.data };
-        window.dispatchEvent(new Event('bizpark_store_updated'));
+      // Update only the timestamp from server response — do NOT spread raw MongoDB document
+      // (which contains _id, __v, key, etc.) over the clean frontend state
+      if (resultJson && resultJson.data && resultJson.data.updatedAt) {
+        data._savedAt = resultJson.data.updatedAt;
+        memoryStoreData = data;
       }
       return { success: true, remoteSaved: true, localSaved, data: resultJson };
     } else {
