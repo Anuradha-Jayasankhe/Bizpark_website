@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-# Replace this placeholder with the production domain before deploying.
-Sitemap: https://bizparkstudio.lk/sitemap.xml
+Sitemap: https://www.bizparkstudio.lk/sitemap.xml

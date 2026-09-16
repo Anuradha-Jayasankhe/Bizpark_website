@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Replace your-domain.com with the production domain before deploying. -->
   <url>
-    <loc>https://bizparkstudio.lk/</loc>
+    <loc>https://www.bizparkstudio.lk/</loc>
     <priority>1.0</priority>
   </url>
 </urlset>
