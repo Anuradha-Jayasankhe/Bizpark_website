@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { getStoreData } from '../data/store';
 const logoImg = '/images/logo.png';
 
 export default function Navbar({ currentPage }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [companyEmail, setCompanyEmail] = useState(() => getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
+
+  useEffect(() => {
+    const handleStoreUpdate = () => {
+      setCompanyEmail(getStoreData().settings?.adminEmail || 'bizparkstudio@gmail.com');
+    };
+    window.addEventListener('bizpark_store_updated', handleStoreUpdate);
+    return () => window.removeEventListener('bizpark_store_updated', handleStoreUpdate);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -422,10 +432,10 @@ export default function Navbar({ currentPage }) {
 
             <div className="text-center pt-0.5">
               <a
-                href="mailto:bizparkstudio@gmail.com"
+                href={`mailto:${companyEmail}`}
                 className="text-[11px] text-[#95928a] hover:text-[#f2603e] font-mono transition-colors block truncate"
               >
-                bizparkstudio@gmail.com
+                {companyEmail}
               </a>
             </div>
           </div>

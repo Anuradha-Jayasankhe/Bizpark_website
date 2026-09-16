@@ -109,7 +109,7 @@ Developer: bizparkstudio
 To configure the real production environment or request custom changes,
 please submit your requirements at:
 Web: http://localhost:5173/#requirement-form
-Contact: bizparkstudio@gmail.com
+Contact: ${storeData.settings?.adminEmail || 'bizparkstudio@gmail.com'}
 
 =====================================================
 Copyright (c) 2026 bizparkstudio. All rights reserved.

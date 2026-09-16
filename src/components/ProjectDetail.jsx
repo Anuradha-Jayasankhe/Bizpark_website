@@ -145,7 +145,7 @@ Developer: bizparkstudio
 Official Software Package & Deployment Package.
 For installation documentation or custom server setup,
 visit: http://localhost:5173/#requirement-form
-Contact: bizparkstudio@gmail.com
+Contact: ${storeData.settings?.adminEmail || 'bizparkstudio@gmail.com'}
 
 =====================================================
 Copyright (c) 2026 bizparkstudio. All rights reserved.
