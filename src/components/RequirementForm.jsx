@@ -31,6 +31,8 @@ export default function RequirementForm() {
 
   const serviceOptions = [
     { id: 'dev', label: 'Software Development' },
+    { id: 'web', label: 'Web Development' },
+    { id: 'mobile', label: 'Mobile App Development' },
     { id: 'mkt', label: 'Social Media Marketing' },
     { id: 'dsgn', label: 'Graphic Design & Branding' },
     { id: 'full', label: 'All-in-One Studio Plan' },

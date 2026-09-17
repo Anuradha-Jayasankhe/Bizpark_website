@@ -361,7 +361,8 @@ export default function ContactPage() {
                     className="w-full bg-[#0a0a0a] border border-white/15 focus:border-[#f2603e] p-3 text-sm text-white font-sans outline-none cut-sm transition-colors"
                   >
                     <option value="Software Solutions">Software Solutions (POS, ERP, Custom App)</option>
-                    <option value="Web Solutions">Web Solutions (Headless Web, SaaS, Storefront)</option>
+                    <option value="Web Development">Web Development (Headless Web, SaaS, Storefront)</option>
+                    <option value="Mobile App Development">Mobile App Development (iOS &amp; Android Apps)</option>
                     <option value="Branding">Branding &amp; Identity Architecture</option>
                     <option value="Social Media Marketing">Social Media &amp; Performance Growth</option>
                     <option value="Full-Stack Package">Full-Stack All-in-One Retainer</option>
